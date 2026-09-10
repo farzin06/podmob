@@ -1,0 +1,19 @@
+{
+  "name": "podmob",
+  "version": "1.0.0",
+  "description": "Full-stack podcast mobile app with Pure React Native and Node.js/MySQL backend",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test:rss": "cd backend && npm run test:rss",
+    "android:sync": "cd frontend && npm run build && npx cap sync android",
+    "android:build": "cd frontend/android && ./gradlew assembleDebug",
+    "android:reverse": "adb reverse tcp:5001 tcp:5001",
+    "android:run": "npm run android:reverse && cd frontend && npm run build && npx cap run android"
+  },
+  "keywords": ["podcast", "react-native", "express", "mysql", "rss"],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PodMob</string>
+    <string name="title_activity_main">PodMob</string>
+    <string name="package_name">com.podmob.app</string>
+    <string name="custom_url_scheme">com.podmob.app</string>
+</resources>

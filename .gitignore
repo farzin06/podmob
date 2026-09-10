@@ -1,0 +1,92 @@
+# ==========================================
+# PodMob Project .gitignore
+# ==========================================
+
+# ------------------------------------------
+# 1. Dependencies
+# ------------------------------------------
+node_modules/
+*/node_modules/
+.pnp
+.pnp.js
+
+# ------------------------------------------
+# 2. Environment Variables & Credentials (CRITICAL)
+# ------------------------------------------
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+backend/.env
+frontend/.env
+
+# ------------------------------------------
+# 3. Build & Distribution Outputs
+# ------------------------------------------
+dist/
+*/dist/
+build/
+*/build/
+out/
+.vite/
+*/.vite/
+.tsbuildinfo
+
+# ------------------------------------------
+# 4. Databases & Runtime Storage
+# ------------------------------------------
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite-wal
+*.db
+backend/podmob.sqlite
+backend/podmob.sqlite-wal
+backend/podmob.sqlite-shm
+
+# ------------------------------------------
+# 5. Logs & Debugging
+# ------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+backend.log
+frontend.log
+
+# ------------------------------------------
+# 6. Android Native Build Artifacts (Capacitor/Gradle)
+# ------------------------------------------
+frontend/android/.gradle/
+frontend/android/build/
+frontend/android/app/build/
+frontend/android/app/src/main/assets/public/
+frontend/android/app/src/main/assets/capacitor.config.json
+frontend/android/app/src/main/assets/capacitor.plugins.json
+frontend/android/local.properties
+*.apk
+*.aab
+*.dex
+.gradle/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# ------------------------------------------
+# 7. OS & IDE System Files
+# ------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-workspace
+*.swp
+*.swo
