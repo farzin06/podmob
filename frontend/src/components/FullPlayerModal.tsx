@@ -45,31 +45,43 @@ export const FullPlayerModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#06070B]/95 backdrop-blur-3xl flex flex-col justify-between overflow-y-auto animate-in fade-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[70] bg-[#06070B]/98 backdrop-blur-3xl flex flex-col justify-between overflow-y-auto animate-modal-slide pb-safe">
       {/* Top Ambient Glow Background */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-indigo-600/15 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute top-48 left-1/2 -translate-x-1/2 w-80 h-80 bg-pink-600/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 sm:w-96 h-80 sm:h-96 bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none animate-ambient-pulse" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 sm:w-80 h-64 sm:h-80 bg-pink-600/15 rounded-full blur-[100px] pointer-events-none animate-ambient-pulse" style={{ animationDelay: '-3s' }} />
+
+      {/* Top Drag Handle for Mobile Intuition */}
+      <div className="w-full flex justify-center pt-2.5 pb-1 sticky top-0 bg-[#06070B]/90 backdrop-blur-md z-20">
+        <div className="w-12 h-1 bg-white/20 rounded-full" />
+      </div>
 
       {/* Top Header Bar */}
-      <div className="relative flex items-center justify-between px-6 py-4 border-b border-white/5 sticky top-0 bg-[#06070B]/70 backdrop-blur-md z-10">
+      <div className="relative flex items-center justify-between px-4 sm:px-6 py-2.5 border-b border-white/5 sticky top-4 bg-[#06070B]/85 backdrop-blur-md z-10">
         <button
           onClick={() => setIsExpanded(false)}
-          className="p-2.5 -ml-2 rounded-2xl glass-panel text-slate-300 hover:text-white transition-all transform active:scale-95"
+          className="p-2 rounded-2xl glass-panel text-slate-300 hover:text-white transition-all transform active:scale-95"
           title="Minimize player"
         >
-          <ChevronDown size={24} />
+          <ChevronDown size={22} />
         </button>
 
-        <div className="text-center max-w-[240px]">
-          <span className="text-[10px] font-black tracking-widest text-indigo-400 uppercase block">
-            Playing From
-          </span>
-          <span className="text-xs font-extrabold text-slate-200 truncate block">
+        <div className="text-center max-w-[220px]">
+          {currentEpisode.is_preview ? (
+            <span className="text-[9px] font-black tracking-widest text-pink-400 uppercase inline-flex items-center gap-1">
+              <Sparkles size={10} />
+              Live Discover Preview
+            </span>
+          ) : (
+            <span className="text-[9px] font-black tracking-widest text-indigo-400 uppercase block">
+              Playing From Library
+            </span>
+          )}
+          <span className="text-xs font-black text-slate-200 truncate block">
             {currentEpisode.podcast_title || 'Podcast'}
           </span>
         </div>
 
-        <div className="w-10" />
+        <div className="w-9" />
       </div>
 
       {/* Main Content Center Column */}
@@ -82,10 +94,10 @@ export const FullPlayerModal: React.FC = () => {
             <img
               src={currentEpisode.effective_image_url || currentEpisode.image_url || ''}
               alt={currentEpisode.title}
-              className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-[28px] object-cover shadow-2xl ring-1 ring-white/15"
+              className="relative w-60 h-60 sm:w-72 sm:h-72 rounded-[28px] object-cover shadow-2xl ring-1 ring-white/15"
             />
           ) : (
-            <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-[28px] glass-panel-elevated flex items-center justify-center text-indigo-400">
+            <div className="relative w-60 h-60 sm:w-72 sm:h-72 rounded-[28px] glass-panel-elevated flex items-center justify-center text-indigo-400">
               <Radio size={72} />
             </div>
           )}
@@ -93,7 +105,7 @@ export const FullPlayerModal: React.FC = () => {
 
         {/* Title & Creator */}
         <div className="w-full text-center my-3 flex flex-col items-center gap-2">
-          <h2 className="text-lg sm:text-xl font-black text-slate-100 line-clamp-2 leading-snug px-2">
+          <h2 className="text-base sm:text-xl font-black text-slate-100 line-clamp-2 leading-snug px-2">
             {currentEpisode.title}
           </h2>
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-pink-500/15 to-purple-500/15 border border-pink-500/30 text-pink-300 text-xs font-bold shadow-sm">
@@ -133,14 +145,14 @@ export const FullPlayerModal: React.FC = () => {
           {/* Big Play / Pause / Loading Button */}
           <button
             onClick={togglePlayPause}
-            className="w-20 h-20 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-pink-500 hover:from-indigo-500 hover:to-pink-400 text-white flex items-center justify-center shadow-2xl shadow-indigo-500/50 ring-4 ring-indigo-500/20 transition-all transform active:scale-95"
+            className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-pink-500 hover:from-indigo-500 hover:to-pink-400 text-white flex items-center justify-center shadow-2xl shadow-indigo-500/50 ring-4 ring-indigo-500/20 transition-all transform active:scale-95"
           >
             {isLoading ? (
-              <Loader2 size={36} className="animate-spin text-white" />
+              <Loader2 size={34} className="animate-spin text-white" />
             ) : isPlaying ? (
-              <Pause size={34} className="fill-white" />
+              <Pause size={32} className="fill-white" />
             ) : (
-              <Play size={34} className="fill-white ml-1.5" />
+              <Play size={32} className="fill-white ml-1.5" />
             )}
           </button>
 

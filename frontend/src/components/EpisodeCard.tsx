@@ -32,15 +32,15 @@ export const EpisodeCard: React.FC<Props> = ({ episode, showPodcastName = true }
   return (
     <div
       onClick={() => playEpisode(episode)}
-      className={`group relative rounded-3xl p-4 transition-all duration-300 ease-out cursor-pointer overflow-hidden border active:scale-[0.98] ${
+      className={`group relative rounded-3xl p-3.5 sm:p-4 transition-all duration-300 ease-out cursor-pointer overflow-hidden border active:scale-[0.98] ${
         isCurrent
           ? 'glass-panel-elevated border-indigo-500/60 shadow-xl shadow-indigo-600/15 ring-1 ring-indigo-500/30'
-          : 'glass-panel hover:bg-slate-900/90 border-slate-800/80 hover:border-slate-700/80'
+          : 'glass-panel hover:bg-slate-900/90 border-white/5 hover:border-slate-700/80'
       }`}
     >
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3.5 sm:gap-4">
         {/* Cover Art + Play / Loading Button */}
-        <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden flex-shrink-0 bg-slate-900 shadow-md ring-1 ring-white/10">
+        <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-slate-900 shadow-md ring-1 ring-white/10">
           {episode.effective_image_url || episode.image_url ? (
             <img
               src={episode.effective_image_url || episode.image_url || ''}
@@ -49,11 +49,11 @@ export const EpisodeCard: React.FC<Props> = ({ episode, showPodcastName = true }
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-indigo-400">
-              <Radio size={24} />
+              <Radio size={22} />
             </div>
           )}
 
-          {/* Overlay Button: Loader or Play/Pause */}
+          {/* Overlay Button: Loader or Soundwave or Play */}
           <div
             className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
               isCurrentlyPlaying || isCurrentlyLoading
@@ -62,31 +62,31 @@ export const EpisodeCard: React.FC<Props> = ({ episode, showPodcastName = true }
             }`}
           >
             {isCurrentlyLoading ? (
-              <Loader2 size={22} className="animate-spin text-white" />
+              <Loader2 size={20} className="animate-spin text-white" />
             ) : isCurrentlyPlaying ? (
               <div className="flex items-center gap-0.5">
-                <span className="w-1 bg-white rounded-full soundwave-bar" style={{ animationDelay: '0ms' }} />
-                <span className="w-1 bg-white rounded-full soundwave-bar" style={{ animationDelay: '200ms' }} />
-                <span className="w-1 bg-white rounded-full soundwave-bar" style={{ animationDelay: '400ms' }} />
+                <span className="w-1 bg-white rounded-full soundwave-1" />
+                <span className="w-1 bg-white rounded-full soundwave-2" />
+                <span className="w-1 bg-white rounded-full soundwave-3" />
               </div>
             ) : (
-              <Play size={20} className="fill-white ml-0.5 transition-transform group-hover:scale-110" />
+              <Play size={18} className="fill-white ml-0.5 transition-transform group-hover:scale-110" />
             )}
           </div>
         </div>
 
         {/* Content Details */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5 gap-1.5">
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5 gap-1">
           {/* Creator & Show Header */}
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
             {episode.author && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-gradient-to-r from-pink-500/15 to-purple-500/15 text-pink-300 border border-pink-500/20 max-w-[140px] truncate">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-gradient-to-r from-pink-500/15 to-purple-500/15 text-pink-300 border border-pink-500/20 max-w-[130px] truncate">
                 <User size={10} />
                 <span className="truncate">{episode.author}</span>
               </span>
             )}
             {showPodcastName && episode.podcast_title && (
-              <span className="text-[11px] font-medium text-slate-400 truncate max-w-[170px]">
+              <span className="text-[11px] font-medium text-slate-400 truncate max-w-[150px] sm:max-w-[200px]">
                 {episode.podcast_title}
               </span>
             )}
@@ -94,24 +94,24 @@ export const EpisodeCard: React.FC<Props> = ({ episode, showPodcastName = true }
 
           {/* Episode Title */}
           <h3
-            className={`text-sm font-bold line-clamp-2 leading-snug transition-colors duration-200 ${
-              isCurrent ? 'text-indigo-400' : 'text-slate-100 group-hover:text-indigo-300'
+            className={`text-xs sm:text-sm font-bold line-clamp-2 leading-snug transition-colors duration-200 ${
+              isCurrent ? 'text-indigo-400 font-extrabold' : 'text-slate-100 group-hover:text-indigo-300'
             }`}
           >
             {episode.title}
           </h3>
 
           {/* Meta Info */}
-          <div className="flex items-center gap-3.5 text-xs text-slate-400 mt-0.5">
+          <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-0.5">
             {episode.duration && (
-              <div className="flex items-center gap-1.5 font-medium">
-                <Clock size={12} className="text-slate-500" />
+              <div className="flex items-center gap-1 font-medium">
+                <Clock size={11} className="text-slate-500" />
                 <span>{episode.duration}</span>
               </div>
             )}
             {episode.published_at && (
-              <div className="flex items-center gap-1.5 font-medium">
-                <Calendar size={12} className="text-slate-500" />
+              <div className="flex items-center gap-1 font-medium">
+                <Calendar size={11} className="text-slate-500" />
                 <span>{formatDate(episode.published_at)}</span>
               </div>
             )}

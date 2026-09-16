@@ -49,9 +49,13 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setBuffered(audio.buffered.end(audio.buffered.length - 1));
       }
 
-      // Sync progress to backend every 5 seconds
+      // Sync progress to backend every 5 seconds (only for subscribed / saved library episodes)
       const now = Date.now();
-      if (now - lastSyncTimeRef.current > 5000 && currentEpisodeRef.current) {
+      if (
+        now - lastSyncTimeRef.current > 5000 &&
+        currentEpisodeRef.current &&
+        !currentEpisodeRef.current.is_preview
+      ) {
         lastSyncTimeRef.current = now;
         apiClient.saveProgress(
           currentEpisodeRef.current.id,
@@ -78,7 +82,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const handlePause = () => setIsPlaying(false);
     const handleEnded = () => {
       setIsPlaying(false);
-      if (currentEpisodeRef.current) {
+      if (currentEpisodeRef.current && !currentEpisodeRef.current.is_preview) {
         apiClient.saveProgress(
           currentEpisodeRef.current.id,
           audio.currentTime,

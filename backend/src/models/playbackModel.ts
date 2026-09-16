@@ -30,31 +30,45 @@ export class PlaybackModel {
     positionSeconds: number,
     durationSeconds: number,
     isCompleted?: boolean
-  ): Promise<PlaybackProgress> {
-    const existing = await this.findByEpisodeId(episodeId);
-    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    const completed = isCompleted ? 1 : positionSeconds / Math.max(durationSeconds, 1) > 0.95 ? 1 : 0;
+  ): Promise<PlaybackProgress | null> {
+    try {
+      // Check if episode exists in database first
+      const episodeExists = await db.query(`SELECT id FROM episodes WHERE id = ? LIMIT 1`, [episodeId]);
+      if (!episodeExists || episodeExists.length === 0) {
+        // Episode is a live preview / not subscribed yet, skip saving progress
+        return null;
+      }
 
-    if (existing) {
-      const sql = `
-        UPDATE playback_progress
-        SET position_seconds = ?,
-            duration_seconds = ?,
-            is_completed = ?,
-            last_played_at = ?
-        WHERE episode_id = ?
-      `;
-      await db.execute(sql, [positionSeconds, durationSeconds, completed, now, episodeId]);
-    } else {
-      const id = uuidv4();
-      const sql = `
-        INSERT INTO playback_progress (id, episode_id, position_seconds, duration_seconds, is_completed, last_played_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `;
-      await db.execute(sql, [id, episodeId, positionSeconds, durationSeconds, completed, now]);
+      const existing = await this.findByEpisodeId(episodeId);
+      const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const completed = isCompleted ? 1 : positionSeconds / Math.max(durationSeconds, 1) > 0.95 ? 1 : 0;
+
+      if (existing) {
+        const sql = `
+          UPDATE playback_progress
+          SET position_seconds = ?,
+              duration_seconds = ?,
+              is_completed = ?,
+              last_played_at = ?
+          WHERE episode_id = ?
+        `;
+        await db.execute(sql, [positionSeconds, durationSeconds, completed, now, episodeId]);
+      } else {
+        const id = uuidv4();
+        const sql = `
+          INSERT INTO playback_progress (id, episode_id, position_seconds, duration_seconds, is_completed, last_played_at)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `;
+        await db.execute(sql, [id, episodeId, positionSeconds, durationSeconds, completed, now]);
+      }
+
+      return await this.findByEpisodeId(episodeId);
+    } catch (err: any) {
+      if (err.code === 'ER_NO_REFERENCED_ROW_2' || err.errno === 1452) {
+        return null;
+      }
+      throw err;
     }
-
-    return (await this.findByEpisodeId(episodeId))!;
   }
 
   static async getRecentlyPlayed(limit = 10): Promise<PlaybackProgress[]> {

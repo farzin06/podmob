@@ -101,10 +101,24 @@ class DatabaseManager implements DBAdapter {
           link TEXT,
           language VARCHAR(32),
           categories TEXT,
+          source VARCHAR(64) DEFAULT 'pasted',
+          external_id VARCHAR(255) NULL,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
           updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           INDEX idx_author (author),
+          INDEX idx_external_id (external_id),
           FOREIGN KEY (feed_source_id) REFERENCES feed_sources(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+
+      await this.mysqlPool.query(`
+        CREATE TABLE IF NOT EXISTS discover_cache (
+          id VARCHAR(36) PRIMARY KEY,
+          cache_key VARCHAR(255) NOT NULL UNIQUE,
+          category VARCHAR(64) NULL,
+          data_json LONGTEXT NOT NULL,
+          expires_at DATETIME NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
       `);
 
@@ -167,12 +181,24 @@ class DatabaseManager implements DBAdapter {
           link TEXT,
           language TEXT,
           categories TEXT,
+          source TEXT DEFAULT 'pasted',
+          external_id TEXT NULL,
           created_at TEXT DEFAULT (datetime('now')),
           updated_at TEXT DEFAULT (datetime('now')),
           FOREIGN KEY (feed_source_id) REFERENCES feed_sources(id) ON DELETE CASCADE
         );
 
         CREATE INDEX IF NOT EXISTS idx_podcasts_author ON podcasts(author);
+        CREATE INDEX IF NOT EXISTS idx_podcasts_external_id ON podcasts(external_id);
+
+        CREATE TABLE IF NOT EXISTS discover_cache (
+          id TEXT PRIMARY KEY,
+          cache_key TEXT NOT NULL UNIQUE,
+          category TEXT NULL,
+          data_json TEXT NOT NULL,
+          expires_at TEXT NOT NULL,
+          created_at TEXT DEFAULT (datetime('now'))
+        );
 
         CREATE TABLE IF NOT EXISTS episodes (
           id TEXT PRIMARY KEY,

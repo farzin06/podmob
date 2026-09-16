@@ -16,25 +16,25 @@ export const CreatorFilterBar: React.FC<Props> = ({
   const totalEpisodes = creators.reduce((acc, c) => acc + c.episode_count, 0);
 
   return (
-    <div className="w-full my-4">
+    <div className="w-full my-3">
       {/* Header Label */}
-      <div className="flex items-center justify-between px-1 mb-2.5">
-        <div className="flex items-center gap-1.5 text-[11px] font-extrabold tracking-widest text-slate-400 uppercase">
-          <Sparkles size={13} className="text-indigo-400 animate-pulse" />
-          <span>Filter by Creator</span>
+      <div className="flex items-center justify-between px-0.5 mb-2">
+        <div className="flex items-center gap-1.5 text-[10px] font-extrabold tracking-widest text-slate-400 uppercase">
+          <Sparkles size={12} className="text-indigo-400 animate-pulse" />
+          <span>Filter by Host / Creator</span>
         </div>
         {selectedCreator && (
           <button
             onClick={() => onSelectCreator(null)}
-            className="text-[11px] font-bold text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+            className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
           >
-            Reset filter
+            Reset
           </button>
         )}
       </div>
 
       {/* Chips Scroller */}
-      <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar py-1">
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
         {/* "All Creators" button */}
         <button
           onClick={() => onSelectCreator(null)}

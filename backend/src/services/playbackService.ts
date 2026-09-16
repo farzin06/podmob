@@ -6,7 +6,7 @@ export class PlaybackService {
     positionSeconds: number,
     durationSeconds: number,
     isCompleted?: boolean
-  ): Promise<PlaybackProgress> {
+  ): Promise<PlaybackProgress | null> {
     return PlaybackModel.saveProgress(episodeId, positionSeconds, durationSeconds, isCompleted);
   }
 

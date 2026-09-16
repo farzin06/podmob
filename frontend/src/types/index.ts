@@ -25,6 +25,8 @@ export interface Podcast {
   link: string | null;
   language: string | null;
   categories: string | null;
+  source?: string;
+  external_id?: string | null;
   created_at: string;
   updated_at: string;
   episode_count?: number;
@@ -53,6 +55,7 @@ export interface Episode {
   position_seconds?: number;
   is_completed?: number;
   last_played_at?: string;
+  is_preview?: boolean;
 }
 
 export interface CreatorSummary {
@@ -76,4 +79,47 @@ export interface PlaybackProgress {
   podcast_title?: string;
   podcast_author?: string;
   podcast_image_url?: string;
+}
+
+// Discover / Podcast Index API Models
+export interface DiscoverEpisode {
+  id: string | number;
+  guid?: string;
+  title: string;
+  description: string;
+  author?: string;
+  audioUrl?: string;
+  audio_url?: string;
+  duration?: string;
+  durationSeconds?: number;
+  duration_seconds?: number;
+  publishedAt?: string;
+  published_at?: string;
+  imageUrl?: string;
+  image_url?: string;
+}
+
+export interface DiscoverPodcast {
+  id: string | number;
+  title: string;
+  url: string; // RSS feed URL
+  originalUrl?: string;
+  link?: string;
+  description: string;
+  author: string;
+  image: string;
+  artwork?: string;
+  language?: string;
+  episodeCount?: number;
+  categories?: Record<string, string> | string[];
+  trendingRank?: number;
+  sampleEpisodes?: DiscoverEpisode[];
+  episodes?: DiscoverEpisode[];
+}
+
+export interface DiscoverCategory {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
 }

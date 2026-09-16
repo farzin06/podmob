@@ -132,18 +132,18 @@ export const FeedManagerScreen: React.FC<Props> = ({ onSelectPodcast }) => {
   };
 
   return (
-    <div className="w-full pb-36 overflow-y-auto px-4 sm:px-6">
+    <div className="w-full pb-32 overflow-y-auto px-3.5 sm:px-6">
       {/* Header Bar */}
-      <div className="sticky top-0 z-30 bg-[#06070B]/80 backdrop-blur-xl border-b border-white/5 py-4 flex items-center justify-between -mx-4 sm:-mx-6 px-4 sm:px-6">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl glass-panel flex items-center justify-center text-indigo-400 shadow-md">
-            <Rss size={20} />
+      <div className="sticky top-0 z-30 bg-[#06070B]/85 backdrop-blur-xl border-b border-white/5 py-3.5 flex items-center justify-between -mx-3.5 sm:-mx-6 px-3.5 sm:px-6">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl glass-panel flex items-center justify-center text-indigo-400 shadow-md">
+            <Rss size={19} />
           </div>
           <div>
-            <h1 className="text-xl font-black text-slate-100 tracking-tight leading-none">
+            <h1 className="text-lg sm:text-xl font-black text-slate-100 tracking-tight leading-none">
               Feed Manager
             </h1>
-            <span className="text-[10px] font-extrabold text-indigo-400 tracking-widest uppercase block mt-0.5">
+            <span className="text-[9px] sm:text-[10px] font-extrabold text-indigo-400 tracking-widest uppercase block mt-0.5">
               Pasted RSS Sources
             </span>
           </div>
@@ -154,14 +154,14 @@ export const FeedManagerScreen: React.FC<Props> = ({ onSelectPodcast }) => {
           className="p-2.5 text-slate-400 hover:text-slate-200 glass-panel rounded-2xl transition-all transform active:scale-95"
           title="Refresh feeds"
         >
-          <RefreshCw size={16} className={refreshing ? 'animate-spin text-indigo-400' : ''} />
+          <RefreshCw size={15} className={refreshing ? 'animate-spin text-indigo-400' : ''} />
         </button>
       </div>
 
       {/* Input Box Card with Glow */}
-      <div className="my-5 p-5 glass-panel rounded-3xl border border-white/10 shadow-xl flex flex-col gap-3.5">
-        <label className="text-xs font-black tracking-widest text-slate-300 uppercase flex items-center gap-2">
-          <Sparkles size={13} className="text-pink-400" />
+      <div className="my-4 p-4 sm:p-5 glass-panel rounded-3xl border border-white/10 shadow-xl flex flex-col gap-3">
+        <label className="text-[11px] font-black tracking-widest text-slate-300 uppercase flex items-center gap-1.5">
+          <Sparkles size={12} className="text-pink-400" />
           <span>Paste RSS Feed URL</span>
         </label>
 
@@ -174,21 +174,21 @@ export const FeedManagerScreen: React.FC<Props> = ({ onSelectPodcast }) => {
               setInputUrl(e.target.value);
               setStatusMessage(null);
             }}
-            className="w-full bg-[#0B0E17] border border-white/10 rounded-2xl px-4 py-3 text-xs sm:text-sm text-slate-100 placeholder-slate-600 font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
+            className="w-full bg-[#0B0E17] border border-white/10 rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-600 font-mono outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
           />
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2.5 pt-1">
+        <div className="flex items-center gap-2 pt-0.5">
           <button
             onClick={handlePreview}
             disabled={isPreviewLoading || isSubmitting}
-            className="px-4 py-3 rounded-2xl glass-panel hover:bg-slate-800 text-slate-200 text-xs font-bold flex items-center gap-2 transition-all transform active:scale-95 disabled:opacity-50"
+            className="px-3.5 py-2.5 rounded-2xl glass-panel hover:bg-slate-800 text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-all transform active:scale-95 disabled:opacity-50"
           >
             {isPreviewLoading ? (
-              <Loader2 size={15} className="animate-spin text-indigo-400" />
+              <Loader2 size={14} className="animate-spin text-indigo-400" />
             ) : (
-              <Search size={15} className="text-indigo-400" />
+              <Search size={14} className="text-indigo-400" />
             )}
             <span>Preview</span>
           </button>
@@ -196,14 +196,14 @@ export const FeedManagerScreen: React.FC<Props> = ({ onSelectPodcast }) => {
           <button
             onClick={() => handleAddFeed()}
             disabled={isSubmitting || isPreviewLoading}
-            className="flex-1 py-3 px-5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-black flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 transition-all transform active:scale-95 disabled:opacity-50"
+            className="flex-1 py-2.5 px-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-black flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/30 transition-all transform active:scale-95 disabled:opacity-50"
           >
             {isSubmitting ? (
-              <Loader2 size={16} className="animate-spin" />
+              <Loader2 size={15} className="animate-spin" />
             ) : (
-              <Plus size={16} />
+              <Plus size={15} />
             )}
-            <span>{isSubmitting ? 'Syncing Feed...' : 'Add & Ingest Feed'}</span>
+            <span>{isSubmitting ? 'Syncing...' : 'Add & Ingest Feed'}</span>
           </button>
         </div>
 

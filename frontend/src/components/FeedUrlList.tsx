@@ -63,14 +63,14 @@ export const FeedUrlList: React.FC<Props> = ({
   }
 
   return (
-    <div className="px-4 pb-6">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-bold tracking-wider text-slate-400 uppercase">
+    <div className="pb-6">
+      <div className="flex items-center justify-between mb-3 px-0.5">
+        <span className="text-[11px] font-black tracking-wider text-slate-400 uppercase">
           Pasted RSS Feeds ({feedSources.length})
         </span>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2.5">
         {feedSources.map((feed) => {
           const isSyncing = syncingId === feed.id || feed.status === 'syncing';
 
@@ -78,41 +78,41 @@ export const FeedUrlList: React.FC<Props> = ({
             <div
               key={feed.id}
               onClick={() => onSelectFeed(feed)}
-              className="group bg-slate-900/80 hover:bg-slate-900 rounded-2xl border border-slate-800 hover:border-slate-700 transition-all duration-200 overflow-hidden cursor-pointer shadow-sm hover:shadow-md"
+              className="group glass-panel hover:glass-panel-elevated rounded-3xl border border-white/5 hover:border-slate-700/80 transition-all duration-300 overflow-hidden cursor-pointer shadow-md active:scale-[0.98]"
             >
               {/* Main Card Info */}
-              <div className="p-3.5 flex items-center gap-3.5">
+              <div className="p-3.5 flex items-center gap-3">
                 {/* Artwork */}
                 <div className="relative flex-shrink-0">
                   {feed.podcast_image_url ? (
                     <img
                       src={feed.podcast_image_url}
                       alt={feed.title || 'Podcast'}
-                      className="w-14 h-14 rounded-xl object-cover ring-1 ring-slate-700/50"
+                      className="w-13 h-13 rounded-2xl object-cover ring-1 ring-white/10"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-xl bg-slate-800 flex items-center justify-center text-indigo-400 border border-slate-700/50">
-                      <Radio size={24} />
+                    <div className="w-13 h-13 rounded-2xl bg-slate-900 flex items-center justify-center text-indigo-400 border border-white/10">
+                      <Radio size={22} />
                     </div>
                   )}
                 </div>
 
                 {/* Text Info */}
-                <div className="flex-1 min-w-0 flex flex-col gap-1">
-                  <h4 className="text-sm font-bold text-slate-100 truncate group-hover:text-indigo-400 transition-colors">
+                <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                  <h4 className="text-xs sm:text-sm font-bold text-slate-100 truncate group-hover:text-indigo-400 transition-colors">
                     {feed.title || feed.podcast_title || 'Unnamed Feed'}
                   </h4>
 
                   {/* Creator */}
                   {feed.podcast_author && (
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-pink-400">
-                      <User size={12} />
+                    <div className="flex items-center gap-1.5 text-[11px] font-semibold text-pink-400">
+                      <User size={10} />
                       <span className="truncate">{feed.podcast_author}</span>
                     </div>
                   )}
 
                   {/* URL */}
-                  <span className="text-[11px] text-slate-500 font-mono truncate">
+                  <span className="text-[10px] text-slate-500 font-mono truncate max-w-[180px] sm:max-w-[260px]">
                     {feed.url}
                   </span>
 
@@ -120,28 +120,28 @@ export const FeedUrlList: React.FC<Props> = ({
                   <div className="flex flex-wrap items-center gap-2 mt-1">
                     {/* Status Badge */}
                     <span
-                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-extrabold ${
                         feed.status === 'active'
-                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                          ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
                           : feed.status === 'syncing'
-                          ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                          : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                          ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20'
+                          : 'bg-rose-500/15 text-rose-400 border border-rose-500/20'
                       }`}
                     >
                       {feed.status === 'active' && <CheckCircle2 size={10} />}
-                      {feed.status === 'syncing' && <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />}
+                      {feed.status === 'syncing' && <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />}
                       {feed.status === 'error' && <AlertCircle size={10} />}
                       {feed.status.toUpperCase()}
                     </span>
 
                     {/* Episodes Count */}
-                    <span className="text-[11px] text-slate-400 font-medium">
-                      {feed.episode_count || 0} episodes
+                    <span className="text-[10px] text-slate-400 font-bold">
+                      {feed.episode_count || 0} eps
                     </span>
 
                     {/* Last Sync */}
-                    <span className="inline-flex items-center gap-1 text-[11px] text-slate-500">
-                      <Clock size={11} />
+                    <span className="inline-flex items-center gap-1 text-[10px] text-slate-500">
+                      <Clock size={10} />
                       {formatDate(feed.last_synced_at)}
                     </span>
                   </div>

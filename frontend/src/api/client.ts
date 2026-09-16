@@ -1,5 +1,13 @@
 import axios from 'axios';
-import { FeedSource, Podcast, Episode, CreatorSummary, PlaybackProgress } from '../types/index.js';
+import {
+  FeedSource,
+  Podcast,
+  Episode,
+  CreatorSummary,
+  PlaybackProgress,
+  DiscoverPodcast,
+  DiscoverCategory,
+} from '../types/index.js';
 
 // Determine the best API URL for web and Android
 const getBaseUrl = () => {
@@ -111,5 +119,33 @@ export const apiClient = {
   getRecentlyPlayed: async (limit = 10): Promise<PlaybackProgress[]> => {
     const res = await api.get('/playback/recent', { params: { limit } });
     return res.data.data;
+  },
+
+  // Discover / Podcast Index API methods
+  discover: {
+    search: async (term?: string, category?: string): Promise<{ feeds: DiscoverPodcast[]; count: number }> => {
+      const res = await api.get('/discover/search', { params: { term, category } });
+      return { feeds: res.data.feeds || [], count: res.data.count || 0 };
+    },
+
+    getTrending: async (category?: string): Promise<{ feeds: DiscoverPodcast[]; count: number }> => {
+      const res = await api.get('/discover/trending', { params: { category } });
+      return { feeds: res.data.feeds || [], count: res.data.count || 0 };
+    },
+
+    getCategories: async (): Promise<DiscoverCategory[]> => {
+      const res = await api.get('/discover/categories');
+      return res.data.categories || [];
+    },
+
+    lookup: async (id: string | number): Promise<{ feed: DiscoverPodcast; episodes: any[] }> => {
+      const res = await api.get(`/discover/lookup/${id}`);
+      return { feed: res.data.feed, episodes: res.data.episodes || [] };
+    },
+
+    subscribe: async (data: { feedUrl: string; title?: string; externalId?: string | number }): Promise<{ feedSource: FeedSource; podcast: Podcast }> => {
+      const res = await api.post('/discover/subscribe', data);
+      return res.data.data;
+    },
   },
 };

@@ -67,12 +67,12 @@ export const PodcastDetailScreen: React.FC<Props> = ({
   );
 
   return (
-    <div className="w-full pb-36 overflow-y-auto px-4 sm:px-6">
+    <div className="w-full pb-32 overflow-y-auto px-3.5 sm:px-6">
       {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-30 bg-[#06070B]/80 backdrop-blur-xl border-b border-white/5 py-3 flex items-center justify-between -mx-4 sm:-mx-6 px-4 sm:px-6">
+      <div className="sticky top-0 z-30 bg-[#06070B]/85 backdrop-blur-xl border-b border-white/5 py-3 flex items-center justify-between -mx-3.5 sm:-mx-6 px-3.5 sm:px-6">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-sm font-extrabold text-slate-200 hover:text-white glass-panel px-3.5 py-1.5 rounded-2xl transition-all transform active:scale-95"
+          className="flex items-center gap-1.5 text-xs sm:text-sm font-extrabold text-slate-200 hover:text-white glass-panel px-3.5 py-1.5 rounded-2xl transition-all transform active:scale-95"
         >
           <ArrowLeft size={16} />
           <span>Library</span>
@@ -80,9 +80,9 @@ export const PodcastDetailScreen: React.FC<Props> = ({
       </div>
 
       {/* Hero Podcast Banner */}
-      <div className="my-5 p-5 glass-panel-elevated rounded-3xl border border-white/10 flex flex-col sm:flex-row gap-5 items-center sm:items-start text-center sm:text-left shadow-2xl">
+      <div className="my-4 p-4 sm:p-5 glass-panel-elevated rounded-3xl border border-white/10 flex flex-col sm:flex-row gap-4 items-center sm:items-start text-center sm:text-left shadow-2xl">
         {/* Cover Art with Glow */}
-        <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-3xl overflow-hidden bg-slate-950 flex-shrink-0 shadow-2xl ring-1 ring-white/15">
+        <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-3xl overflow-hidden bg-slate-950 flex-shrink-0 shadow-2xl ring-1 ring-white/15">
           {podcast.image_url ? (
             <img
               src={podcast.image_url}
@@ -91,32 +91,32 @@ export const PodcastDetailScreen: React.FC<Props> = ({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-indigo-400">
-              <Radio size={54} />
+              <Radio size={44} />
             </div>
           )}
         </div>
 
         {/* Info */}
-        <div className="flex-1 flex flex-col gap-2.5 items-center sm:items-start">
-          <h1 className="text-lg sm:text-2xl font-black text-slate-100 leading-tight">
+        <div className="flex-1 flex flex-col gap-2 items-center sm:items-start">
+          <h1 className="text-base sm:text-xl font-black text-slate-100 leading-tight">
             {podcast.title}
           </h1>
 
           {/* Creator Chip */}
           <div
             onClick={() => podcast.author && onSelectCreator?.(podcast.author)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-pink-500/15 to-purple-500/15 border border-pink-500/30 text-pink-300 text-xs font-bold cursor-pointer hover:scale-105 transition-transform"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-pink-500/15 to-purple-500/15 border border-pink-500/30 text-pink-300 text-xs font-bold cursor-pointer hover:scale-105 transition-transform"
           >
-            <User size={12} />
-            <span>{podcast.author || 'Unknown Creator'}</span>
+            <User size={11} />
+            <span className="truncate">{podcast.author || 'Unknown Creator'}</span>
           </div>
 
-          <div className="flex items-center gap-3 text-xs font-bold text-slate-400 mt-1">
-            <span className="glass-panel px-2.5 py-0.5 rounded-full text-indigo-400">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 mt-0.5">
+            <span className="glass-panel px-2.5 py-0.5 rounded-full text-indigo-400 text-[11px]">
               {podcast.episodes?.length || 0} Episodes
             </span>
             {podcast.language && <span>•</span>}
-            {podcast.language && <span>{podcast.language.toUpperCase()}</span>}
+            {podcast.language && <span className="text-[11px]">{podcast.language.toUpperCase()}</span>}
           </div>
         </div>
       </div>
@@ -124,15 +124,15 @@ export const PodcastDetailScreen: React.FC<Props> = ({
       {/* Description */}
       {podcast.description && (
         <div className="my-3">
-          <p className="text-xs leading-relaxed text-slate-300 glass-panel p-4 rounded-3xl border border-white/5">
+          <p className="text-xs leading-relaxed text-slate-300 glass-panel p-3.5 sm:p-4 rounded-3xl border border-white/5 line-clamp-4">
             {podcast.description}
           </p>
         </div>
       )}
 
       {/* Search Episodes Bar */}
-      <div className="my-4 relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+      <div className="my-3.5 relative">
+        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
           <Search size={15} />
         </div>
         <input
@@ -140,12 +140,12 @@ export const PodcastDetailScreen: React.FC<Props> = ({
           placeholder="Search episodes in this show..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-[#0B0E17] border border-white/10 rounded-2xl pl-11 pr-10 py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
+          className="w-full bg-[#0B0E17] border border-white/10 rounded-2xl pl-10 pr-9 py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-500 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
         />
         {searchQuery.length > 0 && (
           <button
             onClick={() => setSearchQuery('')}
-            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
           >
             <X size={15} />
           </button>
@@ -153,10 +153,10 @@ export const PodcastDetailScreen: React.FC<Props> = ({
       </div>
 
       {/* Episodes List */}
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between text-xs px-1 my-1">
-          <span className="font-extrabold uppercase tracking-widest text-slate-500">Episodes</span>
-          <span className="font-extrabold text-indigo-400">{filteredEpisodes.length} available</span>
+      <div className="flex flex-col gap-2.5">
+        <div className="flex items-center justify-between text-xs px-0.5 my-1">
+          <span className="font-extrabold uppercase tracking-widest text-slate-500 text-[10px]">Episodes</span>
+          <span className="font-extrabold text-indigo-400 text-[11px]">{filteredEpisodes.length} available</span>
         </div>
 
         {filteredEpisodes.length === 0 ? (
