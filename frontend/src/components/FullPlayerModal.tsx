@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useAudio } from '../context/AudioContext.js';
 import {
   ChevronDown,
@@ -34,14 +34,55 @@ export const FullPlayerModal: React.FC = () => {
   } = useAudio();
 
   const [showNotes, setShowNotes] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragPosition, setDragPosition] = useState<number | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   if (!isExpanded || !currentEpisode) return null;
 
   const speeds = [0.75, 1.0, 1.25, 1.5, 2.0];
+  const effectiveDuration = duration > 0 ? duration : (currentEpisode.duration_seconds || 0);
+  const currentPos = isDragging && dragPosition !== null ? dragPosition : position;
+  const progressPercent = effectiveDuration > 0 ? Math.min(100, Math.max(0, (currentPos / effectiveDuration) * 100)) : 0;
 
-  const handleSeekChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Number(e.target.value);
-    seekTo(val);
+  const calculatePositionFromPointer = (clientX: number) => {
+    if (!trackRef.current || effectiveDuration <= 0) return 0;
+    const rect = trackRef.current.getBoundingClientRect();
+    const offsetX = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    const pct = offsetX / rect.width;
+    return pct * effectiveDuration;
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {}
+    setIsDragging(true);
+    const newPos = calculatePositionFromPointer(e.clientX);
+    setDragPosition(newPos);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    const newPos = calculatePositionFromPointer(e.clientX);
+    setDragPosition(newPos);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDragging) {
+      const finalPos = calculatePositionFromPointer(e.clientX);
+      seekTo(finalPos);
+      setIsDragging(false);
+      setDragPosition(null);
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {}
+    }
+  };
+
+  const handlePointerCancel = () => {
+    setIsDragging(false);
+    setDragPosition(null);
   };
 
   return (
@@ -114,19 +155,60 @@ export const FullPlayerModal: React.FC = () => {
           </div>
         </div>
 
-        {/* Scrub Slider */}
-        <div className="w-full my-4">
-          <input
-            type="range"
-            min={0}
-            max={duration || 100}
-            value={position}
-            onChange={handleSeekChange}
-            className="w-full h-2 cursor-pointer bg-slate-800/80 rounded-full"
-          />
-          <div className="flex items-center justify-between text-xs font-bold text-slate-400 mt-2 px-1">
-            <span>{formatTime(position)}</span>
-            <span>{formatTime(duration)}</span>
+        {/* Liquid Aura Glowing Disc Seekbar (Option 5) */}
+        <div className="w-full my-4 select-none">
+          <div
+            ref={trackRef}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
+            className="relative w-full h-10 flex items-center cursor-pointer touch-none group"
+            title="Drag or tap to seek"
+          >
+            {/* Background Rail Track */}
+            <div className="w-full h-2 sm:h-2.5 bg-slate-850 bg-slate-900/90 rounded-full overflow-hidden border border-white/10 shadow-inner relative">
+              {/* Active Filled Gradient Liquid Bar */}
+              <div
+                className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full transition-all duration-75 relative"
+                style={{ width: `${progressPercent}%` }}
+              >
+                {/* Micro Liquid Shine Reflection */}
+                <div className="absolute inset-0 bg-white/20 rounded-full" />
+              </div>
+            </div>
+
+            {/* Liquid Aura Glowing Disc Thumb */}
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white flex items-center justify-center shadow-[0_0_20px_rgba(168,85,247,0.95),0_2px_8px_rgba(0,0,0,0.6)] ring-4 ring-purple-500/40 pointer-events-none transition-transform duration-150 ${
+                isDragging ? 'scale-125 ring-pink-500/50 shadow-[0_0_26px_rgba(236,72,153,1)]' : 'group-hover:scale-110'
+              }`}
+              style={{
+                left: `${progressPercent}%`,
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              {/* Inner Glowing Core */}
+              <div className="w-2 h-2 rounded-full bg-gradient-to-tr from-indigo-600 to-pink-500" />
+            </div>
+
+            {/* Floating Live Dragging Timestamp Badge */}
+            {isDragging && (
+              <div
+                className="absolute -top-3 px-2.5 py-1 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-[10px] font-black shadow-xl shadow-indigo-600/60 pointer-events-none z-30 transform -translate-x-1/2 -translate-y-full border border-indigo-400/40 animate-in fade-in zoom-in-95 duration-100"
+                style={{
+                  left: `${progressPercent}%`,
+                }}
+              >
+                {formatTime(currentPos)}
+              </div>
+            )}
+          </div>
+
+          {/* Timestamps */}
+          <div className="flex items-center justify-between text-xs font-bold text-slate-400 mt-1 px-1">
+            <span className="text-indigo-400 font-extrabold">{formatTime(currentPos)}</span>
+            <span className="text-slate-500">{formatTime(effectiveDuration)}</span>
           </div>
         </div>
 

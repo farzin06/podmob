@@ -13,6 +13,7 @@ interface AudioContextType {
   isLoading: boolean;
   playEpisode: (episode: Episode) => void;
   togglePlayPause: () => void;
+  closePlayer: () => void;
   seekTo: (seconds: number) => void;
   skipForward: (seconds?: number) => void;
   skipBackward: (seconds?: number) => void;
@@ -154,6 +155,19 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const closePlayer = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = '';
+    }
+    setIsPlaying(false);
+    setIsLoading(false);
+    setCurrentEpisode(null);
+    setIsExpanded(false);
+    setPosition(0);
+    setDuration(0);
+  };
+
   const seekTo = (seconds: number) => {
     if (!audioRef.current) return;
     const clamped = Math.max(0, Math.min(seconds, duration || 99999));
@@ -204,6 +218,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         isLoading,
         playEpisode,
         togglePlayPause,
+        closePlayer,
         seekTo,
         skipForward,
         skipBackward,
