@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import { createApp } from './app.js';
 import { db } from './config/db.js';
+import { FeedSyncScheduler } from './services/feedSyncScheduler.js';
 
 dotenv.config();
 
@@ -10,6 +11,9 @@ async function bootstrap() {
   try {
     // Initialize database (MySQL with automatic fallback)
     await db.init();
+
+    // Start background RSS sync scheduler (runs every 20 minutes)
+    FeedSyncScheduler.init();
 
     const app = createApp();
 
@@ -24,6 +28,7 @@ async function bootstrap() {
 
     const shutdown = async () => {
       console.log('Shutting down server...');
+      FeedSyncScheduler.stop();
       server.close(async () => {
         await db.close();
         console.log('Server closed successfully.');

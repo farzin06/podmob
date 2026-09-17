@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DiscoverPodcast, DiscoverEpisode } from '../types/index.js';
 import { apiClient } from '../api/client.js';
 import { useAudio } from '../context/AudioContext.js';
+import { formatLocationAndLanguage } from '../utils/formatters.js';
 import {
   ArrowLeft,
   User,
@@ -15,6 +16,10 @@ import {
   Sparkles,
   Search,
   X,
+  Globe,
+  ListMusic,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
 interface Props {
@@ -35,6 +40,7 @@ export const DiscoverDetailModal: React.FC<Props> = ({
   const [loading, setLoading] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
   const [subscribedLocally, setSubscribedLocally] = useState(isSubscribed);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   const { currentEpisode, isPlaying, isLoading, playEpisode, setIsExpanded } = useAudio();
 
@@ -112,6 +118,16 @@ export const DiscoverDetailModal: React.FC<Props> = ({
     (ep.description && ep.description.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
+  const podcastArtwork = podcast.image || podcast.artwork;
+  const locationInfo = formatLocationAndLanguage(podcast.language);
+
+  const categoriesList = React.useMemo(() => {
+    if (!podcast.categories) return [];
+    if (Array.isArray(podcast.categories)) return podcast.categories.slice(0, 3);
+    if (typeof podcast.categories === 'object') return Object.values(podcast.categories).slice(0, 3);
+    return [];
+  }, [podcast.categories]);
+
   return (
     <div className="w-full pb-32 overflow-y-auto px-3.5 sm:px-6">
       {/* Top Navigation Bar */}
@@ -124,7 +140,7 @@ export const DiscoverDetailModal: React.FC<Props> = ({
           <span>Discover</span>
         </button>
 
-        <div className="text-right max-w-[170px] sm:max-w-[240px]">
+        <div className="text-right max-w-[170px] sm:max-w-[240px] truncate">
           <span className="text-[9px] font-black tracking-widest text-indigo-400 uppercase block">
             Discover Show
           </span>
@@ -134,68 +150,163 @@ export const DiscoverDetailModal: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Hero Show Overview */}
-      <div className="my-4 glass-panel-elevated rounded-3xl p-4 sm:p-5 border border-white/10 flex flex-col sm:flex-row gap-4 items-center sm:items-start text-center sm:text-left shadow-2xl">
-        <div className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl overflow-hidden bg-slate-950 flex-shrink-0 shadow-2xl ring-1 ring-white/15">
-          {podcast.image || podcast.artwork ? (
+      {/* Option 4: Audiophile Studio Ribbon Showcase */}
+      <div className="my-4 relative overflow-hidden rounded-[30px] border border-white/10 bg-[#080B12] shadow-2xl p-5 sm:p-6 text-center">
+        {/* Dynamic Ambient Blur Backdrop */}
+        {podcastArtwork && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <img
-              src={podcast.image || podcast.artwork}
-              alt={podcast.title}
-              className="w-full h-full object-cover"
+              src={podcastArtwork}
+              alt=""
+              className="w-full h-full object-cover scale-150 blur-3xl opacity-25 transform -translate-y-6"
             />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-indigo-400">
-              <Radio size={48} />
-            </div>
-          )}
-        </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-[#080B12]/40 via-[#080B12]/90 to-[#080B12]" />
+          </div>
+        )}
 
-        <div className="flex-1 min-w-0 flex flex-col gap-2 items-center sm:items-start">
-          <h1 className="text-base sm:text-lg font-black text-slate-100 leading-tight">
+        <div className="relative z-10 flex flex-col items-center">
+          {/* Square Album Cover */}
+          <div className="relative mb-3 group">
+            <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-950 shadow-[0_20px_45px_rgba(0,0,0,0.9)] ring-1 ring-white/20 transition-transform duration-300 group-hover:scale-[1.02]">
+              {podcastArtwork ? (
+                <img
+                  src={podcastArtwork}
+                  alt={podcast.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-indigo-900 to-purple-900 text-indigo-300">
+                  <Radio size={48} />
+                </div>
+              )}
+            </div>
+            {/* Soft Ambient Glow */}
+            <div className="absolute -inset-1.5 bg-gradient-to-tr from-indigo-500/20 via-pink-500/15 to-purple-500/20 rounded-3xl blur-xl -z-10 opacity-80" />
+          </div>
+
+          {/* Show Title */}
+          <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-snug mb-1">
             {podcast.title}
           </h1>
 
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-pink-500/15 to-purple-500/15 border border-pink-500/30 text-pink-300 text-xs font-bold max-w-full truncate">
-            <User size={11} className="flex-shrink-0" />
-            <span className="truncate">{podcast.author || 'Unknown Creator'}</span>
+          {/* Creator Chip */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-slate-300 bg-white/5 border border-white/10 mb-4">
+            <User size={12} className="text-pink-400" />
+            <span className="truncate max-w-[240px]">{podcast.author || 'Unknown Creator'}</span>
           </div>
 
-          <div className="flex items-center gap-2 mt-0.5">
+          {/* 3-Column Metrics Ribbon Grid */}
+          <div className="grid grid-cols-3 gap-2 w-full max-w-md mb-3">
+            {/* Tile 1: Episodes */}
+            <div className="glass-panel p-2.5 rounded-2xl text-center border border-white/5">
+              <span className="text-[9px] uppercase font-black text-slate-500 tracking-wider block mb-0.5">
+                EPISODES
+              </span>
+              <span className="text-xs sm:text-sm font-black text-indigo-400 flex items-center justify-center gap-1">
+                <ListMusic size={12} className="text-indigo-400" />
+                <span>{podcast.episodeCount || episodes.length}</span>
+              </span>
+            </div>
+
+            {/* Tile 2: Location */}
+            <div className="glass-panel p-2.5 rounded-2xl text-center border border-white/5">
+              <span className="text-[9px] uppercase font-black text-slate-500 tracking-wider block mb-0.5">
+                LOCATION
+              </span>
+              <span className="text-xs sm:text-sm font-black text-emerald-400 flex items-center justify-center gap-1 truncate px-1">
+                <span className="text-xs">{locationInfo.flag}</span>
+                <span className="truncate">{locationInfo.location}</span>
+              </span>
+            </div>
+
+            {/* Tile 3: Language */}
+            <div className="glass-panel p-2.5 rounded-2xl text-center border border-white/5">
+              <span className="text-[9px] uppercase font-black text-slate-500 tracking-wider block mb-0.5">
+                LANGUAGE
+              </span>
+              <span className="text-xs sm:text-sm font-black text-pink-400 flex items-center justify-center gap-1 truncate uppercase">
+                <Globe size={11} className="text-pink-400 flex-shrink-0" />
+                <span className="truncate">{locationInfo.language}</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Categories Row */}
+          {categoriesList.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center gap-1.5 mb-4">
+              {categoriesList.map((cat, idx) => (
+                <div
+                  key={idx}
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 text-[10px] font-bold"
+                >
+                  <Sparkles size={10} className="text-purple-400" />
+                  <span>{cat}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Actions Bar */}
+          <div className="w-full max-w-md flex flex-col sm:flex-row gap-2.5 items-center justify-center">
             {/* Subscribe Action Button */}
             <button
               onClick={handleSubscribe}
               disabled={subscribing}
-              className={`px-4 py-2 rounded-2xl text-xs font-black flex items-center gap-2 shadow-lg transition-all transform active:scale-95 ${
+              className={`w-full py-3 px-5 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-xl transition-all active:scale-98 ${
                 subscribedLocally
                   ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                  : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-indigo-600/30 hover:from-indigo-500 hover:to-purple-500'
+                  : 'bg-white hover:bg-slate-100 text-slate-950 shadow-white/10'
               }`}
             >
               {subscribing ? (
-                <Loader2 size={14} className="animate-spin" />
+                <Loader2 size={15} className="animate-spin" />
               ) : subscribedLocally ? (
-                <Check size={14} className="stroke-[3]" />
+                <Check size={15} className="stroke-[3]" />
               ) : (
-                <Plus size={14} className="stroke-[3]" />
+                <Plus size={15} className="stroke-[3]" />
               )}
-              <span>{subscribedLocally ? 'In Your Library' : 'Subscribe & Add to Library'}</span>
+              <span>{subscribedLocally ? 'In Your Library' : 'SUBSCRIBE TO SHOW'}</span>
             </button>
+
+            {/* Play Sample Episode Button */}
+            {episodes.length > 0 && (
+              <button
+                onClick={() => handlePlayEpisode(episodes[0])}
+                className="w-full sm:w-auto py-3 px-5 rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 glass-panel hover:bg-white/10 text-slate-200 border border-white/10 transition-all active:scale-98"
+              >
+                <Play size={13} className="fill-white" />
+                <span>Preview Latest</span>
+              </button>
+            )}
           </div>
         </div>
-      </div>
 
-      {/* Description */}
-      {podcast.description && (
-        <div className="my-3">
-          <p className="text-xs leading-relaxed text-slate-300 glass-panel p-4 rounded-3xl border border-white/5 line-clamp-4">
-            {podcast.description}
-          </p>
-        </div>
-      )}
+        {/* Description Accordion */}
+        {podcast.description && (
+          <div className="mt-3 pt-2.5 border-t border-white/5 text-left">
+            <p
+              className={`text-xs leading-relaxed text-slate-300 ${
+                showFullDescription ? '' : 'line-clamp-2'
+              }`}
+            >
+              {podcast.description}
+            </p>
+            {podcast.description.length > 120 && (
+              <button
+                onClick={() => setShowFullDescription(!showFullDescription)}
+                className="mt-1.5 text-[11px] font-extrabold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors"
+              >
+                <span>{showFullDescription ? 'Show less' : 'Read full summary'}</span>
+                {showFullDescription ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Episode Search Bar */}
       {episodes.length > 2 && (
-        <div className="my-3.5 relative">
+        <div className="my-2 relative">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
             <Search size={15} />
           </div>
@@ -276,14 +387,14 @@ export const DiscoverDetailModal: React.FC<Props> = ({
                       <div
                         className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
                           isCurrentlyPlaying || isCurrentlyLoading
-                            ? 'bg-indigo-600/80 text-white backdrop-blur-[2px]'
+                            ? 'bg-black/20 text-white'
                             : 'bg-black/35 text-white group-hover:bg-black/55'
                         }`}
                       >
                         {isCurrentlyLoading ? (
-                          <Loader2 size={20} className="animate-spin text-white" />
+                          <Loader2 size={20} className="animate-spin text-white drop-shadow-md" />
                         ) : isCurrentlyPlaying ? (
-                          <div className="flex items-center gap-0.5">
+                          <div className="flex items-center gap-0.5 p-1.5 rounded-full bg-black/50 backdrop-blur-[3px] border border-white/15 shadow-lg">
                             <span className="w-1 bg-white rounded-full soundwave-1" />
                             <span className="w-1 bg-white rounded-full soundwave-2" />
                             <span className="w-1 bg-white rounded-full soundwave-3" />

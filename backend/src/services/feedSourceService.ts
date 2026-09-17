@@ -16,7 +16,7 @@ export class FeedSourceService {
     return FeedSourceModel.findById(id);
   }
 
-  static async addAndSyncFeedSource(url: string, customTitle?: string): Promise<{ feedSource: FeedSource; podcast: Podcast }> {
+  static async addAndSyncFeedSource(url: string, customTitle?: string): Promise<{ feedSource: FeedSource; podcast: Podcast; newEpisodesCount: number }> {
     const trimmedUrl = url.trim();
     if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
       throw new Error('Invalid URL. Must start with http:// or https://');
@@ -47,9 +47,10 @@ export class FeedSourceService {
         categories: JSON.stringify(parsedFeed.categories),
       });
 
-      // Upsert all parsed episodes
+      // Upsert all parsed episodes and count new additions
+      let newEpisodesCount = 0;
       for (const ep of parsedFeed.episodes) {
-        await EpisodeModel.upsert({
+        const result = await EpisodeModel.upsert({
           podcast_id: podcast.id,
           guid: ep.guid,
           title: ep.title,
@@ -63,13 +64,17 @@ export class FeedSourceService {
           file_size: ep.fileSize,
           file_type: ep.fileType,
         });
+
+        if (result.isNew) {
+          newEpisodesCount++;
+        }
       }
 
       // Mark feed as active
       await FeedSourceModel.updateStatus(feedSource.id, 'active', podcast.title, null);
 
       const updatedFeedSource = (await FeedSourceModel.findById(feedSource.id))!;
-      return { feedSource: updatedFeedSource, podcast };
+      return { feedSource: updatedFeedSource, podcast, newEpisodesCount };
     } catch (err: any) {
       const errorMsg = err.message || 'Failed to parse RSS feed';
       await FeedSourceModel.updateStatus(feedSource.id, 'error', null, errorMsg);
@@ -77,14 +82,65 @@ export class FeedSourceService {
     }
   }
 
-  static async syncFeedSource(id: string): Promise<FeedSource> {
+  static async syncFeedSource(id: string): Promise<{ feedSource: FeedSource; newEpisodesCount: number }> {
     const feedSource = await FeedSourceModel.findById(id);
     if (!feedSource) {
       throw new Error('Feed source not found');
     }
 
-    await this.addAndSyncFeedSource(feedSource.url, feedSource.title || undefined);
-    return (await FeedSourceModel.findById(id))!;
+    const res = await this.addAndSyncFeedSource(feedSource.url, feedSource.title || undefined);
+    return {
+      feedSource: res.feedSource,
+      newEpisodesCount: res.newEpisodesCount,
+    };
+  }
+
+  /**
+   * Syncs all active feed sources in the database and returns summary stats
+   */
+  static async syncAllFeedSources(): Promise<{
+    totalSources: number;
+    syncedCount: number;
+    failedCount: number;
+    newEpisodes: number;
+    results: Array<{ id: string; title: string | null; newEpisodes: number; success: boolean; error?: string }>;
+  }> {
+    const feedSources = await FeedSourceModel.findAll();
+    let syncedCount = 0;
+    let failedCount = 0;
+    let totalNewEpisodes = 0;
+    const results: Array<{ id: string; title: string | null; newEpisodes: number; success: boolean; error?: string }> = [];
+
+    for (const feed of feedSources) {
+      try {
+        const syncResult = await this.addAndSyncFeedSource(feed.url, feed.title || undefined);
+        syncedCount++;
+        totalNewEpisodes += syncResult.newEpisodesCount;
+        results.push({
+          id: feed.id,
+          title: feed.title,
+          newEpisodes: syncResult.newEpisodesCount,
+          success: true,
+        });
+      } catch (err: any) {
+        failedCount++;
+        results.push({
+          id: feed.id,
+          title: feed.title,
+          newEpisodes: 0,
+          success: false,
+          error: err.message,
+        });
+      }
+    }
+
+    return {
+      totalSources: feedSources.length,
+      syncedCount,
+      failedCount,
+      newEpisodes: totalNewEpisodes,
+      results,
+    };
   }
 
   static async deleteFeedSource(id: string): Promise<boolean> {

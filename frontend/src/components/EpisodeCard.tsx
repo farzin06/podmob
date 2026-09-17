@@ -57,14 +57,14 @@ export const EpisodeCard: React.FC<Props> = ({ episode, showPodcastName = true }
           <div
             className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
               isCurrentlyPlaying || isCurrentlyLoading
-                ? 'bg-indigo-600/80 text-white backdrop-blur-[2px]'
+                ? 'bg-black/20 text-white'
                 : 'bg-black/35 text-white group-hover:bg-black/55'
             }`}
           >
             {isCurrentlyLoading ? (
-              <Loader2 size={20} className="animate-spin text-white" />
+              <Loader2 size={20} className="animate-spin text-white drop-shadow-md" />
             ) : isCurrentlyPlaying ? (
-              <div className="flex items-center gap-0.5">
+              <div className="flex items-center gap-0.5 p-1.5 rounded-full bg-black/50 backdrop-blur-[3px] border border-white/15 shadow-lg">
                 <span className="w-1 bg-white rounded-full soundwave-1" />
                 <span className="w-1 bg-white rounded-full soundwave-2" />
                 <span className="w-1 bg-white rounded-full soundwave-3" />

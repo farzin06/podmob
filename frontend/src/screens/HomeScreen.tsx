@@ -49,9 +49,14 @@ export const HomeScreen: React.FC<Props> = ({
     loadData(selectedCreator);
   }, [selectedCreator]);
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
-    loadData(selectedCreator);
+    try {
+      await apiClient.syncAllFeedSources();
+    } catch (err) {
+      console.warn('Sync failed during refresh:', err);
+    }
+    await loadData(selectedCreator);
   };
 
   return (

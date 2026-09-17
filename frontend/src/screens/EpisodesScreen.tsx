@@ -3,7 +3,7 @@ import { Episode, CreatorSummary } from '../types/index.js';
 import { apiClient } from '../api/client.js';
 import { CreatorFilterBar } from '../components/CreatorFilterBar.js';
 import { EpisodeCard } from '../components/EpisodeCard.js';
-import { Search, Radio, X, ListMusic, Loader2 } from 'lucide-react';
+import { Search, Radio, X, ListMusic, Loader2, RefreshCw } from 'lucide-react';
 
 export const EpisodesScreen: React.FC = () => {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -12,6 +12,7 @@ export const EpisodesScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadData = async (creatorFilter = selectedCreator, search = searchQuery) => {
     try {
@@ -31,7 +32,18 @@ export const EpisodesScreen: React.FC = () => {
       console.error('Failed to load episodes:', err);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await apiClient.syncAllFeedSources();
+    } catch (err) {
+      console.warn('Sync failed during refresh:', err);
+    }
+    await loadData(selectedCreator, searchQuery);
   };
 
   useEffect(() => {
@@ -65,6 +77,14 @@ export const EpisodesScreen: React.FC = () => {
             </span>
           </div>
         </div>
+
+        <button
+          onClick={handleRefresh}
+          className="p-2.5 text-slate-400 hover:text-slate-200 glass-panel rounded-2xl transition-all transform active:scale-95"
+          title="Refresh & Sync Episodes"
+        >
+          <RefreshCw size={15} className={refreshing ? 'animate-spin text-indigo-400' : ''} />
+        </button>
       </div>
 
       {/* Search Input Bar with Glow */}

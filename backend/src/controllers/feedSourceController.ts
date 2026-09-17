@@ -55,16 +55,33 @@ export class FeedSourceController {
   static async syncFeedSource(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const id = String(req.params.id);
-      const feedSource = await FeedSourceService.syncFeedSource(id);
+      const result = await FeedSourceService.syncFeedSource(id);
       res.json({
         success: true,
-        message: 'Feed re-synced successfully',
-        data: feedSource,
+        message: `Feed re-synced successfully (${result.newEpisodesCount} new episodes)`,
+        data: result.feedSource,
+        newEpisodesCount: result.newEpisodesCount,
       });
     } catch (err: any) {
       res.status(400).json({
         success: false,
         message: err.message || 'Failed to re-sync feed',
+      });
+    }
+  }
+
+  static async syncAllFeedSources(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const summary = await FeedSourceService.syncAllFeedSources();
+      res.json({
+        success: true,
+        message: `Sync complete: ${summary.syncedCount}/${summary.totalSources} feeds synced. Found ${summary.newEpisodes} new episodes.`,
+        data: summary,
+      });
+    } catch (err: any) {
+      res.status(500).json({
+        success: false,
+        message: err.message || 'Failed to sync all feeds',
       });
     }
   }

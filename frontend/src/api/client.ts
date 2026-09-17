@@ -53,6 +53,11 @@ export const apiClient = {
     return res.data.data;
   },
 
+  syncAllFeedSources: async (): Promise<{ totalSources: number; syncedCount: number; newEpisodes: number }> => {
+    const res = await api.post('/feed-sources/sync-all');
+    return res.data.data;
+  },
+
   deleteFeedSource: async (id: string): Promise<void> => {
     await api.delete(`/feed-sources/${id}`);
   },

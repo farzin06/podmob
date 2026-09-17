@@ -128,7 +128,7 @@ export class EpisodeModel {
     image_url?: string | null;
     file_size?: number;
     file_type?: string | null;
-  }): Promise<void> {
+  }): Promise<{ isNew: boolean; id: string }> {
     const existing = await this.findByGuid(data.podcast_id, data.guid);
     const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
@@ -160,6 +160,7 @@ export class EpisodeModel {
         data.file_type || null,
         existing.id,
       ]);
+      return { isNew: false, id: existing.id };
     } else {
       const id = uuidv4();
       const sql = `
@@ -186,6 +187,7 @@ export class EpisodeModel {
         data.file_type || null,
         now,
       ]);
+      return { isNew: true, id };
     }
   }
 

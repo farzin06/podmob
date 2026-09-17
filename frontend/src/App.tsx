@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { AudioProvider } from './context/AudioContext.js';
 import { HomeScreen } from './screens/HomeScreen.js';
 import { DiscoverScreen } from './screens/DiscoverScreen.js';
@@ -14,6 +14,14 @@ type Tab = 'library' | 'discover' | 'feeds' | 'episodes';
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<Tab>('library');
   const [selectedPodcastId, setSelectedPodcastId] = useState<string | null>(null);
+  const mainScrollRef = useRef<HTMLDivElement>(null);
+
+  // Smoothly scroll back to top on any tab or screen change
+  useEffect(() => {
+    if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTop = 0;
+    }
+  }, [selectedPodcastId, currentTab]);
 
   const handleSelectPodcast = (podcastId: string) => {
     setSelectedPodcastId(podcastId);
@@ -35,16 +43,16 @@ export const App: React.FC = () => {
         <div className="w-full max-w-lg h-full sm:h-[96dvh] flex flex-col bg-[#07090E] sm:rounded-[36px] sm:border sm:border-white/10 relative shadow-[0_0_90px_rgba(0,0,0,0.95)] overflow-hidden">
           
           {/* Main Active Screen Scrollable Viewport */}
-          <main className="flex-1 overflow-y-auto relative no-scrollbar transition-all duration-300">
+          <main ref={mainScrollRef} className="flex-1 overflow-y-auto relative no-scrollbar">
             {selectedPodcastId ? (
-              <div key={`podcast-${selectedPodcastId}`} className="animate-modal-fade">
+              <div key={`podcast-${selectedPodcastId}`} className="animate-page-enter">
                 <PodcastDetailScreen
                   podcastId={selectedPodcastId}
                   onBack={handleBackToLibrary}
                 />
               </div>
             ) : (
-              <div key={`tab-${currentTab}`} className="animate-modal-fade">
+              <div key={`tab-${currentTab}`} className="animate-page-enter">
                 {currentTab === 'library' && (
                   <HomeScreen
                     onSelectPodcast={handleSelectPodcast}
