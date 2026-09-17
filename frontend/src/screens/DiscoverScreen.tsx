@@ -42,7 +42,6 @@ export const DiscoverScreen: React.FC = () => {
 
   // Modal inspection state
   const [selectedPodcast, setSelectedPodcast] = useState<DiscoverPodcast | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
 
   // Subscribed tracker
   const [subscribedUrls, setSubscribedUrls] = useState<Set<string>>(new Set());
@@ -182,8 +181,20 @@ export const DiscoverScreen: React.FC = () => {
 
   const handleOpenDetail = (podcast: DiscoverPodcast) => {
     setSelectedPodcast(podcast);
-    setModalOpen(true);
   };
+
+  if (selectedPodcast) {
+    return (
+      <div className="animate-modal-fade">
+        <DiscoverDetailModal
+          podcast={selectedPodcast}
+          onBack={() => setSelectedPodcast(null)}
+          onSubscribe={handleSubscribe}
+          isSubscribed={subscribedUrls.has(selectedPodcast.url)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full pb-32 overflow-y-auto px-3.5 sm:px-6">
@@ -397,15 +408,6 @@ export const DiscoverScreen: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Show Details & Episode Stream Modal */}
-      <DiscoverDetailModal
-        podcast={selectedPodcast}
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubscribe={handleSubscribe}
-        isSubscribed={selectedPodcast ? subscribedUrls.has(selectedPodcast.url) : false}
-      />
     </div>
   );
 };

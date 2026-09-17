@@ -126,37 +126,37 @@ export const FullPlayerModal: React.FC = () => {
       </div>
 
       {/* Main Content Center Column */}
-      <div className="relative flex-1 flex flex-col items-center justify-center px-6 py-6 max-w-md mx-auto w-full">
+      <div className="relative flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-4 sm:py-6 max-w-md mx-auto w-full">
         {/* Cover Artwork with Glow */}
-        <div className="relative my-3 group">
+        <div className="relative my-2 sm:my-3 group flex-shrink-0">
           <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-[32px] blur-xl opacity-40 group-hover:opacity-60 transition duration-1000 group-hover:duration-200 animate-pulse-slow" />
 
           {currentEpisode.effective_image_url || currentEpisode.image_url ? (
             <img
               src={currentEpisode.effective_image_url || currentEpisode.image_url || ''}
               alt={currentEpisode.title}
-              className="relative w-60 h-60 sm:w-72 sm:h-72 rounded-[28px] object-cover shadow-2xl ring-1 ring-white/15"
+              className="relative w-48 h-48 sm:w-64 sm:h-64 max-w-[68vw] max-h-[32vh] aspect-square rounded-[26px] sm:rounded-[28px] object-cover shadow-2xl ring-1 ring-white/15"
             />
           ) : (
-            <div className="relative w-60 h-60 sm:w-72 sm:h-72 rounded-[28px] glass-panel-elevated flex items-center justify-center text-indigo-400">
-              <Radio size={72} />
+            <div className="relative w-48 h-48 sm:w-64 sm:h-64 max-w-[68vw] max-h-[32vh] aspect-square rounded-[26px] sm:rounded-[28px] glass-panel-elevated flex items-center justify-center text-indigo-400">
+              <Radio size={56} />
             </div>
           )}
         </div>
 
         {/* Title & Creator */}
-        <div className="w-full text-center my-3 flex flex-col items-center gap-2">
-          <h2 className="text-base sm:text-xl font-black text-slate-100 line-clamp-2 leading-snug px-2">
+        <div className="w-full text-center my-2 sm:my-3 flex flex-col items-center gap-1.5 sm:gap-2">
+          <h2 className="text-sm sm:text-lg font-black text-slate-100 line-clamp-2 leading-snug px-2">
             {currentEpisode.title}
           </h2>
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-pink-500/15 to-purple-500/15 border border-pink-500/30 text-pink-300 text-xs font-bold shadow-sm">
-            <User size={12} />
-            <span>{currentEpisode.author || currentEpisode.podcast_author || 'Creator'}</span>
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-pink-500/15 to-purple-500/15 border border-pink-500/30 text-pink-300 text-xs font-bold shadow-sm max-w-[85%] truncate">
+            <User size={12} className="flex-shrink-0" />
+            <span className="truncate">{currentEpisode.author || currentEpisode.podcast_author || 'Creator'}</span>
           </div>
         </div>
 
         {/* Liquid Aura Glowing Disc Seekbar (Option 5) */}
-        <div className="w-full my-4 select-none">
+        <div className="w-full my-3 sm:my-4 select-none">
           <div
             ref={trackRef}
             onPointerDown={handlePointerDown}
@@ -213,38 +213,38 @@ export const FullPlayerModal: React.FC = () => {
         </div>
 
         {/* Big Audio Playback Controls */}
-        <div className="flex items-center justify-center gap-8 my-3">
+        <div className="flex items-center justify-center gap-6 sm:gap-8 my-2 sm:my-3">
           {/* Rewind 15s */}
           <button
             onClick={() => skipBackward(15)}
-            className="flex flex-col items-center gap-1 text-slate-300 hover:text-white p-3 rounded-2xl glass-panel hover:bg-slate-800 transition-transform active:scale-90"
+            className="flex flex-col items-center gap-1 text-slate-300 hover:text-white p-2.5 sm:p-3 rounded-2xl glass-panel hover:bg-slate-800 transition-transform active:scale-90"
             title="Rewind 15s"
           >
-            <RotateCcw size={22} />
+            <RotateCcw size={20} className="sm:w-[22px] sm:h-[22px]" />
             <span className="text-[10px] font-black text-indigo-400">15s</span>
           </button>
 
           {/* Big Play / Pause / Loading Button */}
           <button
             onClick={togglePlayPause}
-            className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-pink-500 hover:from-indigo-500 hover:to-pink-400 text-white flex items-center justify-center shadow-2xl shadow-indigo-500/50 ring-4 ring-indigo-500/20 transition-all transform active:scale-95"
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-pink-500 hover:from-indigo-500 hover:to-pink-400 text-white flex items-center justify-center shadow-2xl shadow-indigo-500/50 ring-4 ring-indigo-500/20 transition-all transform active:scale-95"
           >
             {isLoading ? (
-              <Loader2 size={34} className="animate-spin text-white" />
+              <Loader2 size={30} className="animate-spin text-white sm:w-[34px] sm:h-[34px]" />
             ) : isPlaying ? (
-              <Pause size={32} className="fill-white" />
+              <Pause size={28} className="fill-white sm:w-[32px] sm:h-[32px]" />
             ) : (
-              <Play size={32} className="fill-white ml-1.5" />
+              <Play size={28} className="fill-white ml-1 sm:w-[32px] sm:h-[32px]" />
             )}
           </button>
 
           {/* Forward 30s */}
           <button
             onClick={() => skipForward(30)}
-            className="flex flex-col items-center gap-1 text-slate-300 hover:text-white p-3 rounded-2xl glass-panel hover:bg-slate-800 transition-transform active:scale-90"
+            className="flex flex-col items-center gap-1 text-slate-300 hover:text-white p-2.5 sm:p-3 rounded-2xl glass-panel hover:bg-slate-800 transition-transform active:scale-90"
             title="Forward 30s"
           >
-            <RotateCw size={22} />
+            <RotateCw size={20} className="sm:w-[22px] sm:h-[22px]" />
             <span className="text-[10px] font-black text-indigo-400">30s</span>
           </button>
         </div>

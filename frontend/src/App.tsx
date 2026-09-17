@@ -67,11 +67,11 @@ export const App: React.FC = () => {
           <MiniPlayer />
 
           {/* Bottom Luxury Mobile Navigation Bar */}
-          <nav className="w-full glass-nav pt-2 pb-safe px-3 sm:px-6 flex items-center justify-around z-30 flex-shrink-0">
+          <nav className="w-full glass-nav pt-1.5 pb-safe px-2 sm:px-6 flex items-center justify-around z-30 flex-shrink-0">
             {/* Library Tab */}
             <button
               onClick={() => handleTabChange('library')}
-              className={`flex-1 flex flex-col items-center gap-1 py-1.5 px-2 rounded-2xl transition-all duration-300 transform active:scale-95 ${
+              className={`flex-1 flex flex-col items-center gap-0.5 py-1 px-1 rounded-2xl transition-all duration-300 transform active:scale-95 ${
                 currentTab === 'library' && !selectedPodcastId
                   ? 'text-indigo-400 font-black'
                   : 'text-slate-400 hover:text-slate-200 font-medium'
@@ -84,15 +84,15 @@ export const App: React.FC = () => {
                     : 'text-slate-400'
                 }`}
               >
-                <Library size={19} className={currentTab === 'library' && !selectedPodcastId ? 'stroke-[2.5]' : 'stroke-[2]'} />
+                <Library size={18} className={currentTab === 'library' && !selectedPodcastId ? 'stroke-[2.5]' : 'stroke-[2]'} />
               </div>
-              <span className="text-[10px] tracking-tight font-bold">Library</span>
+              <span className="text-[10px] tracking-tight font-bold truncate">Library</span>
             </button>
 
             {/* Discover Tab */}
             <button
               onClick={() => handleTabChange('discover')}
-              className={`flex-1 flex flex-col items-center gap-1 py-1.5 px-2 rounded-2xl transition-all duration-300 transform active:scale-95 ${
+              className={`flex-1 flex flex-col items-center gap-0.5 py-1 px-1 rounded-2xl transition-all duration-300 transform active:scale-95 ${
                 currentTab === 'discover' && !selectedPodcastId
                   ? 'text-indigo-400 font-black'
                   : 'text-slate-400 hover:text-slate-200 font-medium'
@@ -105,15 +105,15 @@ export const App: React.FC = () => {
                     : 'text-slate-400'
                 }`}
               >
-                <Compass size={19} className={currentTab === 'discover' && !selectedPodcastId ? 'stroke-[2.5]' : 'stroke-[2]'} />
+                <Compass size={18} className={currentTab === 'discover' && !selectedPodcastId ? 'stroke-[2.5]' : 'stroke-[2]'} />
               </div>
-              <span className="text-[10px] tracking-tight font-bold">Discover</span>
+              <span className="text-[10px] tracking-tight font-bold truncate">Discover</span>
             </button>
 
             {/* Pasted Feeds Tab */}
             <button
               onClick={() => handleTabChange('feeds')}
-              className={`flex-1 flex flex-col items-center gap-1 py-1.5 px-2 rounded-2xl transition-all duration-300 transform active:scale-95 ${
+              className={`flex-1 flex flex-col items-center gap-0.5 py-1 px-1 rounded-2xl transition-all duration-300 transform active:scale-95 ${
                 currentTab === 'feeds' && !selectedPodcastId
                   ? 'text-indigo-400 font-black'
                   : 'text-slate-400 hover:text-slate-200 font-medium'
@@ -126,15 +126,15 @@ export const App: React.FC = () => {
                     : 'text-slate-400'
                 }`}
               >
-                <Rss size={19} className={currentTab === 'feeds' && !selectedPodcastId ? 'stroke-[2.5]' : 'stroke-[2]'} />
+                <Rss size={18} className={currentTab === 'feeds' && !selectedPodcastId ? 'stroke-[2.5]' : 'stroke-[2]'} />
               </div>
-              <span className="text-[10px] tracking-tight font-bold">Pasted Feeds</span>
+              <span className="text-[10px] tracking-tight font-bold truncate">Feeds</span>
             </button>
 
             {/* All Episodes Tab */}
             <button
               onClick={() => handleTabChange('episodes')}
-              className={`flex-1 flex flex-col items-center gap-1 py-1.5 px-2 rounded-2xl transition-all duration-300 transform active:scale-95 ${
+              className={`flex-1 flex flex-col items-center gap-0.5 py-1 px-1 rounded-2xl transition-all duration-300 transform active:scale-95 ${
                 currentTab === 'episodes' && !selectedPodcastId
                   ? 'text-indigo-400 font-black'
                   : 'text-slate-400 hover:text-slate-200 font-medium'
@@ -147,9 +147,9 @@ export const App: React.FC = () => {
                     : 'text-slate-400'
                 }`}
               >
-                <ListMusic size={19} className={currentTab === 'episodes' && !selectedPodcastId ? 'stroke-[2.5]' : 'stroke-[2]'} />
+                <ListMusic size={18} className={currentTab === 'episodes' && !selectedPodcastId ? 'stroke-[2.5]' : 'stroke-[2]'} />
               </div>
-              <span className="text-[10px] tracking-tight font-bold">Episodes</span>
+              <span className="text-[10px] tracking-tight font-bold truncate">Episodes</span>
             </button>
           </nav>
 
