@@ -1,30 +1,38 @@
 # PodMob 🎙️
-### Full-Stack Podcast Mobile Application & RSS Ingestion System
+### Full-Stack Podcast Mobile Application, RSS Ingestion Engine & Discovery Platform
 
-PodMob is a podcast listening application featuring a **pure React Native frontend** (no Expo dependencies) and a decoupled **Node.js/Express layered backend** (Routes → Controllers → Services → Models with MySQL/SQLite).
+PodMob is a modern, full-stack podcast streaming platform designed with a luxury mobile-first UI (React + TypeScript + Tailwind CSS + Capacitor for Native Android) and a high-performance Express/Node.js backend with automated feed sync, dual-engine database storage (MySQL with automatic SQLite fallback), and live podcast directory search.
 
 ---
 
 ## 🌟 Key Features
 
-1. **Pasted RSS Feeds Manager & URL List**:
-   - Dedicated feed management screen to paste any podcast RSS/Atom feed URL.
-   - Live sync status indicators (`ACTIVE`, `SYNCING`, `ERROR`), episode count, last sync timestamp, and re-sync/delete controls.
-   - One-tap preset importer for popular shows (Lex Fridman, NPR News Now, BBC Global News, Huberman Lab).
+1. **Audiophile Studio UI & Mobile Design**:
+   - **Option 4: Audiophile Studio Ribbon**: High-fidelity album artwork with realistic depth shadow and soft ambient glow backdrop.
+   - **3-Column Metadata Ribbon Grid**: Displays show metrics (`EPISODES`, `LOCATION`, `LANGUAGE`) with country flag detection and formatted locale.
+   - **High-Contrast 1-Tap Playback Bar**: Quick "START LISTENING" action with instant playback.
+   - **Transparent Playing Indicators**: Soundwave pill on active episode cards that preserves artwork visibility.
+   - **Silky Smooth Navigation Transitions**: Zero-jitter page animations with automatic scroll-to-top position reset.
 
-2. **Creator-Based Filtering & Organization**:
-   - Shows and episodes are indexed by Creator/Author in the database.
-   - Interactive creator filter chips (`All Creators`, `Lex Fridman`, `BBC World Service`, `NPR`, etc.) to filter your entire podcast library and episode feed by specific creators with a single tap.
+2. **Discover & Podcast Index Directory**:
+   - Live as-you-type autocomplete search with instant suggestions dropdown.
+   - Quick topic discovery chips (`Tech & AI`, `News & Politics`, `Science`, `Business`, etc.).
+   - 1-tap show preview and library subscription.
 
-3. **Audio Playback Engine & UI**:
-   - **Floating Mini-Player**: Bottom docked player with live progress bar, play/pause toggle, and skip controls.
-   - **Full-Screen Player Modal**: High-resolution artwork, scrubable progress slider, 15-second rewind, 30-second fast forward, variable playback speed selector (0.75x, 1.0x, 1.25x, 1.5x, 2.0x), and episode show notes.
-   - **Progress Persistence**: Auto-syncs playback progress and resume bookmarks to the backend database.
+3. **Automated Background RSS Sync Engine**:
+   - Background cron-like scheduler (`FeedSyncScheduler`) running every 20 minutes and 10s post-boot.
+   - Automatically detects and ingests new creator episodes into the database without losing bookmarks or duplicating entries.
+   - On-demand global and show-specific re-sync buttons across the app.
 
-4. **Modular Backend Architecture**:
-   - Layered MVC + Service Pattern: `routes/`, `controllers/`, `services/`, `models/`, `config/`.
-   - Robust RSS Parser extracting audio enclosures, iTunes durations, and show metadata.
-   - MySQL database connection pooling with automated schema migration & SQLite fallback for zero-configuration startup.
+4. **Audio Playback Engine & Mini-Player**:
+   - **Docked Floating Mini-Player**: Live progress bar, track info, play/pause toggle, and skip controls.
+   - **Expandable Full Player Modal**: Glowing disc seekbar, 15s rewind, 30s fast-forward, variable speed selector (0.75x to 2.0x), and full show notes.
+   - **Progress Synchronization**: Periodic sync to backend database every 5 seconds.
+
+5. **Layered Backend Architecture**:
+   - Clean MVC + Service Pattern: `routes/`, `controllers/`, `services/`, `models/`, `config/`.
+   - Robust XML/RSS 2.0 & Atom parser extracting audio enclosures, iTunes durations, and show metadata.
+   - Dual-engine storage: MySQL connection pool with automated zero-configuration SQLite fallback.
 
 ---
 
@@ -34,51 +42,60 @@ PodMob is a podcast listening application featuring a **pure React Native fronte
 podmob/
 ├── backend/                       # Node.js & Express REST API
 │   ├── src/
-│   │   ├── config/               # DB connection (MySQL/SQLite pool & auto-migration)
-│   │   ├── models/               # Data access layer (FeedSource, Podcast, Episode, Playback)
-│   │   ├── services/             # RSS parser, Creator aggregator, Feed sync
+│   │   ├── config/               # Database pool (MySQL / SQLite auto-fallback & schema)
+│   │   ├── models/               # Data models (FeedSource, Podcast, Episode, Playback)
+│   │   ├── services/             # RSS parser, Feed sync scheduler, Discover search
 │   │   ├── controllers/          # HTTP request handlers
-│   │   ├── routes/               # Express route definitions
+│   │   ├── routes/               # Express REST route definitions
 │   │   ├── middleware/           # Centralized error handler & logger
 │   │   ├── scripts/              # RSS feed integration tests
-│   │   ├── app.ts                # Express application setup
-│   │   └── server.ts             # Server entry point
-│   ├── .env                      # Database & Port configuration
+│   │   ├── app.ts                # Express app configuration
+│   │   └── server.ts             # Server entry point with scheduler lifecycle
+│   ├── .env                      # Server configuration
 │   └── package.json
 │
-├── frontend/                      # Pure React Native Mobile Application
+├── frontend/                      # React 18 + Vite + Tailwind CSS + Capacitor
 │   ├── src/
 │   │   ├── api/                  # Axios API client
-│   │   ├── context/              # Global Audio Player Context & Playback state
-│   │   ├── theme/                # Color tokens & typography
-│   │   ├── types/                # TypeScript models
+│   │   ├── context/              # Audio playback context & state machine
+│   │   ├── types/                # TypeScript interfaces
+│   │   ├── utils/                # Formatters (language, location, date, duration)
 │   │   ├── components/
+│   │   │   ├── EpisodeCard.tsx       # Episode card with transparent soundwave indicator
+│   │   │   ├── PodcastCard.tsx       # Grid card for subscribed podcasts
 │   │   │   ├── CreatorFilterBar.tsx  # Horizontal Creator filter chips
-│   │   │   ├── FeedUrlList.tsx       # Pasted RSS feeds list with sync badges
-│   │   │   ├── EpisodeCard.tsx       # Episode card with audio player trigger
-│   │   │   ├── PodcastCard.tsx       # Podcast show card for grid view
-│   │   │   ├── MiniPlayer.tsx        # Floating bottom mini-player
-│   │   │   └── FullPlayerModal.tsx   # Expandable player modal with scrub & speeds
+│   │   │   ├── DiscoverCard.tsx      # Discovered channel card with 1-tap subscribe
+│   │   │   ├── DiscoverDetailModal.tsx # Channel preview & episode stream
+│   │   │   ├── MiniPlayer.tsx        # Floating bottom dock player
+│   │   │   └── FullPlayerModal.tsx   # Expandable glowing disc player
 │   │   ├── screens/
 │   │   │   ├── HomeScreen.tsx        # Library with Creator filter & Continue Listening
-│   │   │   ├── FeedManagerScreen.tsx # Paste RSS feed URL & manage pasted feeds
-│   │   │   ├── EpisodesScreen.tsx    # All episodes feed with search & creator filter
-│   │   │   └── PodcastDetailScreen.tsx# Single show view & episode search
-│   │   ├── App.tsx               # Main mobile layout & navigation tabs
-│   │   └── main.tsx              # Web entry point
-│   ├── vite.config.ts            # Bundler config with React Native Web support
+│   │   │   ├── DiscoverScreen.tsx    # Live directory search & topic explorer
+│   │   │   ├── EpisodesScreen.tsx    # Unified episode feed with live search
+│   │   │   ├── PodcastDetailScreen.tsx# Show showcase (Audiophile Studio Ribbon)
+│   │   │   └── FeedManagerScreen.tsx # Paste RSS feed URL & sync manager
+│   │   ├── App.tsx               # Main mobile viewport shell & navigation tabs
+│   │   └── index.css             # Glassmorphism utilities & page transitions
+│   ├── android/                  # Native Android Studio / Gradle project
+│   ├── capacitor.config.json     # Capacitor configuration
 │   └── package.json
+│
+├── docs/                          # Detailed Technical Documentation
+│   ├── ARCHITECTURE.md           # System architecture & component model
+│   ├── API_REFERENCE.md          # REST API endpoints & JSON payloads
+│   ├── FEED_SYNC_ENGINE.md       # Background cron scheduler & ingestion logic
+│   └── ANDROID_BUILD_GUIDE.md    # Android APK compilation guide
 │
 └── package.json                  # Root workspace helper scripts
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### 1. Prerequisites
 - Node.js (v18+)
-- MySQL (Optional: app automatically uses SQLite if MySQL is not running)
+- MySQL (Optional: automatically uses SQLite if MySQL is not running)
 
 ### 2. Backend Setup
 ```bash
@@ -88,33 +105,37 @@ npm run dev
 ```
 The backend will start at `http://localhost:5001`.
 
-To test RSS ingestion with real-world feeds:
-```bash
-npm run test:rss
-```
-
 ### 3. Frontend Setup
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-The frontend will start at `http://localhost:3000`.
+The frontend web app will run at `http://localhost:5173`.
 
 ---
 
-## 🔌 API Endpoints Summary
+## 📱 Android APK Build
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/feed-sources` | List all pasted RSS feed URLs with sync status |
-| `POST` | `/api/feed-sources` | Paste & sync a new RSS feed URL |
-| `POST` | `/api/feed-sources/preview` | Preview feed metadata from URL without saving |
-| `POST` | `/api/feed-sources/:id/sync` | Force re-sync of a pasted feed |
-| `DELETE` | `/api/feed-sources/:id` | Remove a feed source and associated podcasts |
-| `GET` | `/api/podcasts` | Get all podcasts (supports `?creator=...`) |
-| `GET` | `/api/podcasts/creators` | Get all distinct creators with show/episode counts |
-| `GET` | `/api/podcasts/:id` | Get podcast metadata with episode list |
-| `GET` | `/api/episodes` | Filter episodes (`?creator=...&podcastId=...&search=...`) |
-| `POST` | `/api/playback/progress` | Save current playback position |
-| `GET` | `/api/playback/recent` | Get recently played episode bookmarks |
+```bash
+cd frontend
+npm run build
+npx cap sync android
+cd android
+./gradlew assembleDebug
+```
+The debug APK is output at `frontend/android/app/build/outputs/apk/debug/app-debug.apk`.
+
+---
+
+## 📚 Documentation Index
+
+- [System Architecture](docs/ARCHITECTURE.md)
+- [REST API Reference](docs/API_REFERENCE.md)
+- [Background Feed Sync Engine](docs/FEED_SYNC_ENGINE.md)
+- [Android Build & Deployment Guide](docs/ANDROID_BUILD_GUIDE.md)
+
+---
+
+## 📄 License
+MIT License
