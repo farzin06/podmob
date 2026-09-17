@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DiscoverPodcast } from '../types/index.js';
 import { useAudio } from '../context/AudioContext.js';
-import { User, Radio, Plus, Check, Loader2, Play, Pause, Sparkles } from 'lucide-react';
+import { User, Radio, Plus, Check, Loader2, Play, Pause, Sparkles, ChevronRight, Layers } from 'lucide-react';
 
 interface Props {
   podcast: DiscoverPodcast;
@@ -92,134 +92,132 @@ export const DiscoverCard: React.FC<Props> = ({
   return (
     <div
       onClick={() => onSelect(podcast)}
-      className={`group relative rounded-3xl transition-all duration-300 ease-out cursor-pointer flex flex-col overflow-hidden shadow-lg hover:shadow-2xl active:scale-[0.98] border ${
+      className={`group relative rounded-3xl p-3 sm:p-3.5 transition-all duration-300 ease-out cursor-pointer flex items-center justify-between gap-3 sm:gap-4 overflow-hidden shadow-md hover:shadow-xl active:scale-[0.98] border ${
         isCurrentShow
           ? 'glass-panel-elevated border-indigo-500/70 shadow-xl shadow-indigo-600/20 ring-1 ring-indigo-500/40'
-          : 'glass-panel hover:glass-panel-elevated border-white/5 hover:border-indigo-500/40 hover:shadow-indigo-500/10'
+          : 'glass-panel hover:glass-panel-elevated border-white/5 hover:border-indigo-500/40'
       }`}
     >
-      {/* Artwork Box */}
-      <div className="relative aspect-square w-full bg-slate-950 overflow-hidden">
+      {/* Left Artwork with Overlay Controls */}
+      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-950 overflow-hidden flex-shrink-0 ring-1 ring-white/10 shadow-md">
         {podcast.image || podcast.artwork ? (
           <img
             src={podcast.image || podcast.artwork}
             alt={podcast.title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-indigo-400">
-            <Radio size={40} />
+            <Radio size={28} />
           </div>
         )}
 
-        {/* Ambient Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#06070B] via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+        {/* Ambient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-70" />
 
-        {/* Top Badges: Rank / Episodes */}
-        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-          {podcast.trendingRank && (
-            <div className="px-2 py-0.5 rounded-full bg-indigo-600/90 backdrop-blur-md text-[10px] font-black text-white shadow-md">
-              #{podcast.trendingRank}
-            </div>
-          )}
-          {podcast.episodeCount ? (
-            <div className="px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-[10px] font-extrabold text-slate-300 border border-white/10 shadow-md">
-              {podcast.episodeCount} eps
-            </div>
-          ) : null}
-        </div>
-
-        {/* One-Tap Subscribe Button */}
+        {/* Mini Play / Pause Overlay Button on Thumbnail */}
         <button
-          onClick={handleSubscribeClick}
-          disabled={subscribing}
-          className={`absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold flex items-center gap-1 backdrop-blur-md shadow-lg transition-all duration-200 ${
-            subscribedLocally
-              ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300'
-              : 'bg-indigo-600/85 hover:bg-indigo-500 text-white border border-indigo-400/30 active:scale-90'
+          onClick={handlePlayButtonClick}
+          className={`absolute inset-0 m-auto w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+            isShowPlaying || isShowLoading
+              ? 'bg-indigo-600/90 text-white shadow-lg shadow-indigo-600/50'
+              : 'bg-black/50 hover:bg-indigo-600/90 text-white opacity-90 group-hover:opacity-100 group-hover:scale-105'
           }`}
-          title={subscribedLocally ? 'In Library' : 'Subscribe'}
+          title={isCurrentShow ? (isPlaying ? 'Pause' : 'Play') : 'Preview Show'}
         >
-          {subscribing ? (
-            <Loader2 size={11} className="animate-spin" />
-          ) : subscribedLocally ? (
-            <Check size={11} className="stroke-[3]" />
+          {isShowLoading ? (
+            <Loader2 size={15} className="animate-spin text-white" />
+          ) : isShowPlaying ? (
+            <div className="flex items-center gap-0.5">
+              <span className="w-0.5 bg-white rounded-full soundwave-1" />
+              <span className="w-0.5 bg-white rounded-full soundwave-2" />
+              <span className="w-0.5 bg-white rounded-full soundwave-3" />
+            </div>
           ) : (
-            <Plus size={11} className="stroke-[3]" />
+            <Play size={14} className="fill-white ml-0.5" />
           )}
-          <span>{subscribedLocally ? 'Added' : 'Add'}</span>
         </button>
 
-        {/* Mini Player Overlay Controls on Card */}
-        <div className="absolute bottom-2.5 right-2.5 flex items-center gap-1.5">
-          {/* Active Soundwave Indicator */}
-          {isShowPlaying && !isShowLoading && (
-            <div className="px-2 py-1 rounded-xl bg-black/75 backdrop-blur-md border border-indigo-500/40 flex items-center gap-0.5 shadow-md">
-              <span className="w-0.5 bg-indigo-400 rounded-full soundwave-1" />
-              <span className="w-0.5 bg-indigo-400 rounded-full soundwave-2" />
-              <span className="w-0.5 bg-indigo-400 rounded-full soundwave-3" />
-            </div>
-          )}
-
-          {/* Quick Play/Pause Trigger */}
-          <button
-            onClick={handlePlayButtonClick}
-            className={`w-8 h-8 sm:w-9 sm:h-9 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300 transform active:scale-95 ${
-              isCurrentShow
-                ? 'bg-gradient-to-r from-indigo-600 to-pink-600 text-white shadow-indigo-600/50 ring-2 ring-indigo-400/30'
-                : 'bg-indigo-600/90 hover:bg-indigo-500 text-white shadow-indigo-600/40 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 sm:translate-y-2 sm:group-hover:translate-y-0'
-            }`}
-            title={isCurrentShow ? (isPlaying ? 'Pause' : 'Play') : 'Play Show'}
-          >
-            {isShowLoading ? (
-              <Loader2 size={15} className="animate-spin text-white" />
-            ) : isShowPlaying ? (
-              <Pause size={15} className="fill-white" />
-            ) : (
-              <Play size={15} className="fill-white ml-0.5" />
-            )}
-          </button>
-        </div>
-
-        {/* Mini Progress Bar on Card (if this show is active) */}
+        {/* Micro Progress Bar on Artwork */}
         {isCurrentShow && progressPercent > 0 && (
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-900/80">
             <div
-              className="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 transition-all duration-300"
+              className="h-full bg-gradient-to-r from-indigo-500 to-pink-500"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
         )}
       </div>
 
-      {/* Info Details */}
-      <div className="p-3 sm:p-3.5 flex flex-col justify-between flex-1 gap-1 bg-gradient-to-b from-transparent to-slate-950/60">
-        <div>
+      {/* Middle Content Info */}
+      <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+        {/* Categories / Trending Rank */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {podcast.trendingRank && (
+            <span className="px-2 py-0.5 rounded-full bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-[9px] font-black">
+              #{podcast.trendingRank}
+            </span>
+          )}
           {categoriesText && (
-            <span className="text-[10px] font-black uppercase tracking-wider text-indigo-400 truncate block">
+            <span className="text-[10px] font-bold text-indigo-400 tracking-wide uppercase truncate max-w-[150px] sm:max-w-[200px]">
               {categoriesText}
             </span>
           )}
-          <h4
-            className={`text-xs sm:text-sm font-bold line-clamp-1 transition-colors duration-200 mt-0.5 ${
-              isCurrentShow ? 'text-indigo-300 font-black' : 'text-slate-100 group-hover:text-indigo-400'
-            }`}
-          >
-            {podcast.title}
-          </h4>
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-pink-400 mt-0.5">
-            <User size={10} className="flex-shrink-0" />
-            <span className="truncate">{podcast.author || 'Creator'}</span>
-          </div>
         </div>
 
-        {/* Now Playing badge if active */}
+        {/* Channel Title */}
+        <h3 className={`text-xs sm:text-sm font-bold line-clamp-1 leading-snug transition-colors ${
+          isCurrentShow ? 'text-indigo-300 font-extrabold' : 'text-slate-100 group-hover:text-indigo-300'
+        }`}>
+          {podcast.title}
+        </h3>
+
+        {/* Creator & Episodes Count */}
+        <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+          <div className="flex items-center gap-1 text-pink-400 font-semibold truncate max-w-[130px] sm:max-w-[180px]">
+            <User size={11} className="flex-shrink-0" />
+            <span className="truncate">{podcast.author || 'Creator'}</span>
+          </div>
+
+          {podcast.episodeCount ? (
+            <span className="text-slate-500 flex-shrink-0">• {podcast.episodeCount} eps</span>
+          ) : null}
+        </div>
+
+        {/* Now playing indicator */}
         {isCurrentShow && (
-          <div className="flex items-center gap-1 mt-1 text-[10px] font-extrabold text-indigo-400">
+          <div className="flex items-center gap-1 mt-0.5 text-[10px] font-extrabold text-indigo-400">
             <Sparkles size={10} />
             <span className="truncate">{currentEpisode?.title || 'Now Playing'}</span>
           </div>
         )}
+      </div>
+
+      {/* Right Actions: Subscribe Pill */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <button
+          onClick={handleSubscribeClick}
+          disabled={subscribing}
+          className={`px-3 py-1.5 rounded-2xl text-[10px] sm:text-xs font-black flex items-center gap-1.5 transition-all transform active:scale-95 shadow-md ${
+            subscribedLocally
+              ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300'
+              : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-indigo-600/30'
+          }`}
+          title={subscribedLocally ? 'In Library' : 'Subscribe'}
+        >
+          {subscribing ? (
+            <Loader2 size={12} className="animate-spin" />
+          ) : subscribedLocally ? (
+            <Check size={12} className="stroke-[3]" />
+          ) : (
+            <Plus size={12} className="stroke-[3]" />
+          )}
+          <span>{subscribedLocally ? 'Added' : 'Add'}</span>
+        </button>
+
+        <div className="text-slate-600 group-hover:text-slate-300 transition-colors hidden sm:block">
+          <ChevronRight size={16} />
+        </div>
       </div>
     </div>
   );
